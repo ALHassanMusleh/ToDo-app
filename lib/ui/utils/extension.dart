@@ -16,4 +16,8 @@ extension DateTimeExtension on DateTime {
     List<String> days = [ "mon", "the", "wed", "thu", "fri","sat", "sun"];
     return days[weekday - 1];
   }
+
+  bool isSameDate(DateTime date){
+    return day == date.day && month == date.month && year == date.year;
+  }
 }

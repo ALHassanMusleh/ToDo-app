@@ -1,34 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/model/todo_dm.dart';
+import 'package:todo_app/ui/provider/list_provider.dart';
 import 'package:todo_app/ui/utils/app_styles.dart';
-import 'package:todo_app/ui/utils/date_time_extension.dart';
+import 'package:todo_app/ui/utils/extension.dart';
 
 class AddBottomSheet extends StatefulWidget {
   const AddBottomSheet({super.key});
-
   @override
   State<AddBottomSheet> createState() => _AddBottomSheetState();
 
-  static void show(BuildContext context) {
-    showModalBottomSheet(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: const AddBottomSheet(),
-      ),
-    );
-  }
+  // static void show(BuildContext context) {
+  //   showModalBottomSheet(
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (context) => Padding(
+  //       padding: MediaQuery.of(context).viewInsets,
+  //       child: const AddBottomSheet(),
+  //     ),
+  //   );
+  // }
 }
 
 class _AddBottomSheetState extends State<AddBottomSheet> {
   DateTime selectedDate = DateTime.now();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  late ListProvider listProvider;
   @override
   Widget build(BuildContext context) {
+    listProvider = Provider.of(context);
     return Container(
       // height: MediaQuery.of(context).size.height * .5,
       padding: const EdgeInsets.all(16),
@@ -113,6 +116,7 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
     doc.set(todo.toJson()).then((_) {}).onError((error, stacktrace) {}).timeout(
       const Duration(microseconds: 500),
       onTimeout: () {
+        listProvider.getTodosListFromFireStore();
         Navigator.pop(context);
       },
     );

@@ -66,7 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         onPressed: () {
-          AddBottomSheet.show(context);
+          // AddBottomSheet.show(context);
+          showModalBottomSheet(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: const AddBottomSheet(),
+            ),
+          );
         },
         child: Icon(Icons.add),
       );
