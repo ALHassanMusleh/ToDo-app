@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/ui/provider/list_provider.dart';
+import 'package:todo_app/ui/screens/auth/login_screen/login_screen.dart';
+import 'package:todo_app/ui/screens/auth/register_screen/register_screen.dart';
 import 'package:todo_app/ui/screens/home_screen/home_screen.dart';
 import 'package:todo_app/ui/utils/app_theme.dart';
 
@@ -32,8 +34,10 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       routes: {
         HomeScreen.routeName: (_) => HomeScreen(),
+        LoginScreen.routeName: (_) => LoginScreen(),
+        RegisterScreen.routeName: (_) => RegisterScreen(),
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute:  LoginScreen.routeName,
     );
   }
 }

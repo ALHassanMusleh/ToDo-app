@@ -21,3 +21,14 @@ extension DateTimeExtension on DateTime {
     return day == date.day && month == date.month && year == date.year;
   }
 }
+
+
+extension StringExtensions on String{
+
+  bool get isValidEmail{
+    final bool emailValid =
+    RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(this);
+    return emailValid;
+  }
+}
