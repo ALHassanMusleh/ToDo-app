@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/model/todo_dm.dart';
 import 'package:todo_app/ui/provider/list_provider.dart';
+import 'package:todo_app/ui/screens/edit_todo/edit_todo.dart';
 import 'package:todo_app/ui/utils/app_colors.dart';
 import 'package:todo_app/ui/utils/app_styles.dart';
 
@@ -16,37 +17,48 @@ class Todo extends StatelessWidget {
   Widget build(BuildContext context) {
     listProvider = Provider.of(context);
     return Slidable(
-      // Specify a key if the Slidable is dismissible.
-      key: const ValueKey(0),
-
-      // The start action pane is the one at the left or the top side.
       startActionPane: ActionPane(
-        // A motion is a widget used to control how the pane animates.
-        motion: const ScrollMotion(),
-
-        // A pane can dismiss the Slidable.
-        dismissible: DismissiblePane(onDismissed: () {}),
-
-        // All actions are defined in the children parameter.
+        motion: const BehindMotion(),
         children: [
-          // A SlidableAction can have an icon and/or a label.
           SlidableAction(
             onPressed: clearTodo,
-            backgroundColor: Color(0xFFFE4A49),
+            backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Delete',
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(24),
+              bottomRight: Radius.circular(24),
+            ),
+            spacing: 1,
           ),
         ],
       ),
-
+      endActionPane: ActionPane(
+        motion: const BehindMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (context) {
+              Navigator.pushNamed(context, EditTodo.routeName,arguments: todoDM);
+            },
+            backgroundColor: Colors.teal,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Edit',
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              bottomLeft: Radius.circular(24),
+            ),
+            spacing: 1,
+          ),
+        ],
+      ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(24),
           color: AppColors.white,
         ),
-        margin: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+        margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 10),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
         height: MediaQuery.of(context).size.height * .12,
         child: Row(

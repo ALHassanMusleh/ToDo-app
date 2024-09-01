@@ -113,7 +113,7 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
     TodoDM todo = TodoDM(
         id: doc.id,
         title: titleController.text,
-        description: titleController.text,
+        description: descriptionController.text,
         date: selectedDate,
         isDone: false);
 

@@ -24,7 +24,7 @@ class TodoDM {
 
   TodoDM.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    title = json['description'];
+    title = json['title'];
     description = json['description'];
     Timestamp timestamp = json['date'];
     date = timestamp.toDate();
