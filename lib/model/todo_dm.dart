@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:todo_app/model/app_user.dart';
 
 class TodoDM {
   static const String collectionName = 'todo';
@@ -7,6 +8,11 @@ class TodoDM {
   late String description;
   late DateTime date;
   late bool isDone;
+
+  static CollectionReference get userTodosCollection => FirebaseFirestore.instance
+      .collection(AppUser.collectionName)
+      .doc(AppUser.currentUser!.id)
+      .collection(TodoDM.collectionName);
 
   TodoDM({
     required this.id,
