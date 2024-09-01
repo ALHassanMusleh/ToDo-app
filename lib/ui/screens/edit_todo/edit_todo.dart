@@ -117,12 +117,24 @@ class _EditTodoState extends State<EditTodo> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      await TodoDM.userTodosCollection.doc(todoDM.id).update({
-                        "title": titleController.text,
-                        "description": descriptionController.text,
-                        "date": selectedDate,
-                      });
-                      listProvider.getTodosListFromFireStore();
+                      try {
+                        showLoading(context);
+                        await TodoDM.userTodosCollection.doc(todoDM.id).update({
+                          "title": titleController.text,
+                          "description": descriptionController.text,
+                          "date": selectedDate,
+                        });
+                        if (context.mounted) {
+                          hideDialog(context);
+                          showMessage(context, title: 'Edited Succefully todo',posButtonTitle: 'ok');
+                        }
+                        listProvider.getTodosListFromFireStore();
+                      } catch (e) {
+                        if (context.mounted) {
+                          hideDialog(context);
+                          showMessage(context, title: e.toString());
+                        }
+                      }
                     },
                     child: Text('Edit text'),
                   ),
