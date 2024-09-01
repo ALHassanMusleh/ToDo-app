@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/model/todo_dm.dart';
 import 'package:todo_app/ui/provider/list_provider.dart';
@@ -14,23 +15,50 @@ class Todo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     listProvider = Provider.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        color: AppColors.white,
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-      height: MediaQuery.of(context).size.height * .12,
-      child: Row(
+    return Slidable(
+      // Specify a key if the Slidable is dismissible.
+      key: const ValueKey(0),
+
+      // The start action pane is the one at the left or the top side.
+      startActionPane: ActionPane(
+        // A motion is a widget used to control how the pane animates.
+        motion: const ScrollMotion(),
+
+        // A pane can dismiss the Slidable.
+        dismissible: DismissiblePane(onDismissed: () {}),
+
+        // All actions are defined in the children parameter.
         children: [
-          buildVerticalLine(context),
-          const SizedBox(
-            width: 25,
+          // A SlidableAction can have an icon and/or a label.
+          SlidableAction(
+            onPressed: clearTodo,
+            backgroundColor: Color(0xFFFE4A49),
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+            borderRadius: BorderRadius.circular(16),
           ),
-          buildTodoInfo(),
-          buildTodoState(),
         ],
+      ),
+
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          color: AppColors.white,
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 22, horizontal: 26),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+        height: MediaQuery.of(context).size.height * .12,
+        child: Row(
+          children: [
+            buildVerticalLine(context),
+            const SizedBox(
+              width: 25,
+            ),
+            buildTodoInfo(),
+            buildTodoState(),
+          ],
+        ),
       ),
     );
   }
@@ -109,5 +137,10 @@ class Todo extends StatelessWidget {
         size: 30,
       ),
     );
+  }
+
+  void clearTodo(BuildContext context) async {
+    await TodoDM.userTodosCollection.doc(todoDM.id).delete();
+    listProvider.getTodosListFromFireStore();
   }
 }
