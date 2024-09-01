@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/model/app_user.dart';
 import 'package:todo_app/ui/screens/home_screen/home_screen.dart';
 import 'package:todo_app/ui/utils/dialog_utils.dart';
 
@@ -97,15 +99,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void createAccount() async {
     try {
       showLoading(context);
-      await FirebaseAuth.instance
+      UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      AppUser user =
+          AppUser(id: userCredential.user!.uid, name: username, email: email);
+      await addUserToFireStore(user);
+      AppUser.currentUser = user;
       if (mounted) {
         hideDialog(context);
         // showMessage(context,
         //     title: 'Success',
         //     body: 'Account created succesfully',
         //     posButtonTitle: 'ok');
-        Navigator.pushNamed(context, HomeScreen.routeName);
+        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+
       }
     } on FirebaseAuthException catch (authError) {
       if (mounted) {
@@ -143,5 +150,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             posButtonTitle: 'ok');
       }
     }
+  }
+
+  Future<void> addUserToFireStore(AppUser user) async {
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection(AppUser.collectionName);
+    DocumentReference userDoc = userCollection.doc(user.id);
+    await userDoc.set(user.toJson());
   }
 }

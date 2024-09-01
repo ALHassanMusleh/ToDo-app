@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/model/app_user.dart';
 import 'package:todo_app/ui/screens/auth/register_screen/register_screen.dart';
 import 'package:todo_app/ui/screens/home_screen/home_screen.dart';
 import 'package:todo_app/ui/utils/dialog_utils.dart';
@@ -138,6 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
       showLoading(context);
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      AppUser user = await getUserFromFireStore(userCredential.user!.uid);
+      AppUser.currentUser = user;
       print(userCredential.user!.uid);
       if (mounted) {
         hideDialog(context);
@@ -145,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //     title: 'Success',
         //     body: 'Account created succesfully',
         //     posButtonTitle: 'ok');
-        Navigator.pushNamed(context, HomeScreen.routeName);
+        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
       }
     } on FirebaseAuthException catch (authError) {
       if (mounted) {
@@ -186,5 +190,14 @@ class _LoginScreenState extends State<LoginScreen> {
             posButtonTitle: 'ok');
       }
     }
+  }
+
+  Future<AppUser> getUserFromFireStore(String id) async {
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection(AppUser.collectionName);
+    DocumentReference userDoc = userCollection.doc(id);
+    DocumentSnapshot documentSnapShot = await userDoc.get();
+    Map<String, dynamic> json = documentSnapShot.data() as Map<String, dynamic>;
+    return AppUser.fromJson(json);
   }
 }

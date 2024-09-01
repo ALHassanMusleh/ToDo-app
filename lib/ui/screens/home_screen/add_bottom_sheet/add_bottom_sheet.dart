@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/model/app_user.dart';
 import 'package:todo_app/model/todo_dm.dart';
 import 'package:todo_app/ui/provider/list_provider.dart';
 import 'package:todo_app/ui/utils/app_styles.dart';
@@ -98,9 +99,11 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
     );
   }
 
-  void addTodoToFireStore() {
-    CollectionReference todosCollection =
-        FirebaseFirestore.instance.collection(TodoDM.collectionName);
+  void addTodoToFireStore() async {
+    CollectionReference todosCollection = FirebaseFirestore.instance
+        .collection(AppUser.collectionName)
+        .doc(AppUser.currentUser!.id)
+        .collection(TodoDM.collectionName);
 
     /// create document first way
     // todosCollection.add(data);
@@ -113,13 +116,20 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
         description: titleController.text,
         date: selectedDate,
         isDone: false);
-    doc.set(todo.toJson()).then((_) {}).onError((error, stacktrace) {}).timeout(
-      const Duration(microseconds: 500),
-      onTimeout: () {
-        listProvider.getTodosListFromFireStore();
-        Navigator.pop(context);
-      },
-    );
+
+    /// offline
+    // doc.set(todo.toJson()).then((_) {}).onError((error, stacktrace) {}).timeout(
+    //   const Duration(microseconds: 500),
+    //   onTimeout: () {
+    //     listProvider.getTodosListFromFireStore();
+    //     Navigator.pop(context);
+    //   },
+    // );
+
+    /// online
+    await doc.set(todo.toJson());
+    listProvider.getTodosListFromFireStore();
+    Navigator.pop(context);
   }
 
   void showMyDatePicker() async {

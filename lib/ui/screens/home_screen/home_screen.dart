@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/model/app_user.dart';
+import 'package:todo_app/ui/provider/list_provider.dart';
+import 'package:todo_app/ui/screens/auth/login_screen/login_screen.dart';
 import 'package:todo_app/ui/screens/home_screen/add_bottom_sheet/add_bottom_sheet.dart';
 import 'package:todo_app/ui/screens/home_screen/tabs/list/list_tab.dart';
 import 'package:todo_app/ui/screens/home_screen/tabs/settings/settings_tab.dart';
@@ -15,11 +19,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
   List<Widget> tabs = [ListTab(), SettingTab()];
+  late ListProvider listProvider;
   @override
   Widget build(BuildContext context) {
+    listProvider = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ToDo App'),
+        title:  Text('ToDo App ${AppUser.currentUser!.name}'),
+        actions: [
+          InkWell(
+            onTap: (){
+              listProvider.reset();
+              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            },
+              child: Icon(Icons.logout)),
+        ],
       ),
       body: tabs[selectedIndex],
       bottomNavigationBar: buildBottomNavigation(),
